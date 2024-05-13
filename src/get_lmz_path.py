@@ -2,7 +2,7 @@ import os
 
 
 def get_lmz_path():
-    dat_path = "../dat\\"
+    dat_path = "..\\dat\\"
 
     batch_path = dat_path + os.listdir(dat_path)[0] + "\\"
 
