@@ -18,7 +18,7 @@ def get_lmz_path():
     for measure_date_path in measure_date_paths:
         for file_name in os.listdir(measure_date_path):
             if "LMZ" in file_name:
-                lmz_path.append(file_name)
+                lmz_path.append(measure_date_path + file_name)
     print("Found LMZ data in dat folder: ")
     print(lmz_path)
     return lmz_path
