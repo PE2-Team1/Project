@@ -1,8 +1,9 @@
-from src.get_lmz_path import *
+from src.operate import run
 
 # ------ Info & Options ------ #
 info = {
-    'script_description': "Process LMZ",
+    'script_id': "Process LMZ",
+    'script_owner': 'Group 1',
     'script_version': 0.1,
     'operator_name': "",
 }
@@ -12,13 +13,4 @@ save_figure = True
 export_csv = True
 # ---------------------------- #
 
-lmz_paths = get_lmz_path(wafer, device)
-
-"""for lmz_path in lmz_paths:
-    iv_process_result = {}
-    trans_process_result = {}
-    if save_figure:
-        plot_figure(lmz_path, iv_process_result, trans_process_result)
-    if export_csv:
-        export_result(lmz_path, info, iv_process_result, trans_process_result)
-"""
+run(info, wafer, device, save_figure, export_csv)
