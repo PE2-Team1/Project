@@ -62,4 +62,4 @@ def vi(lmz_path):
 
     return {'voltage': voltage_values, 'abs_current': abs_current, 'final current': final, 'R_squared': R_squared}
 
-print(vi())
+
