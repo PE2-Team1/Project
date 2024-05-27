@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import os
 
 fontsize = 12
 
@@ -20,7 +21,7 @@ def plot_figure(iv_result, trans_result, lmz_path):
     fit_current = iv_result['final current']
     iv_r_squared = iv_result['R_squared']
     ax4.scatter(voltage, abs_current, label='Measured')
-    ax4.plot(voltage, fit_current, 'r', label=f'Fitted')
+    ax4.plot(voltage, fit_current, 'r', label='Fitted')
 
     ax4.annotate(f"R$^2$={iv_r_squared}", xy=[-2.0, 1e-4], fontsize=fontsize)
     ax4.annotate(f"-1V={abs_current[4]}A", xy=[-2.0, 1e-5], fontsize=fontsize)
@@ -39,7 +40,14 @@ def plot_figure(iv_result, trans_result, lmz_path):
     plt.tight_layout()
 
     if __name__ == 'src.plot_figure':
-        plt.savefig(f'res\\{device_name}.png')
+        file_name = f'res\\{device_name}.png'
+        if file_name.split('\\')[-1] in os.listdir('res\\'):
+            file_name = f'res\\{device_name}(1).png'
+        plt.savefig(file_name)
     else:
-        plt.savefig(f'..\\res\\{device_name}.png')
+        file_name = f'..\\res\\{device_name}.png'
+        if file_name.split('\\')[-1] in os.listdir('..\\res\\'):
+            file_name = f'..\\res\\{device_name}(1).png'
+        plt.savefig(file_name)
+    plt.close()
     # plt.show()
