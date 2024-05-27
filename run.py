@@ -1,4 +1,4 @@
-import src.operate as operate
+from src.operate import run
 
 # ------ Info & Options ------ #
 info = {
@@ -7,10 +7,10 @@ info = {
     'script_version': 0.1,
     'operator_name': "",
 }
-wafer = ['D07']  # ['D07', 'D08', ...]. Blank out list to process all wafers
-device = ['LMZC']
+wafer = []  # ['D07', 'D08', ...]. Blank out list to process all wafers
+device = ['LMZC', 'LMZO']
 save_figure = True
 export_csv = True
 # ---------------------------- #
 
-operate.run(info, wafer, device, save_figure, export_csv)
+run(info, wafer, device, save_figure, export_csv)

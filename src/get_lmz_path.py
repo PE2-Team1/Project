@@ -24,7 +24,7 @@ def get_lmz_path(wafer, device):
         for file_name in os.listdir(measure_date_path):
             if any(d in file_name for d in device):
                 lmz_paths.append(measure_date_path + file_name)
-    # print(f"Found {len(lmz_paths)} LMZ data in dat folder: ")
+    print(f"Found {len(lmz_paths)} LMZ data in dat folder.")
     # print(lmz_paths)
     return lmz_paths
 
