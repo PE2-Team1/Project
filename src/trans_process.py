@@ -67,18 +67,6 @@ def trans_process(lmz_path):
     for i, wavelengthsweep in enumerate(root.findall('.//WavelengthSweep')):
         flat_transmission = np.array(transmission_list) - np.array(poly6)
 
-        if i != len(root.findall('.//WavelengthSweep')) - 1: # 마지막 아닐 때
-            # Find peaks in transmission data
-            peaks, _ = find_peaks(flat_transmission, distance=50)  # Adjust distance parameter as needed
-
-            # Iterate through peaks and find the one within the specified wavelength range
-            for peak_index in peaks:
-                if 1550 <= wavelength_list[peak_index] <= 1565:
-                    # Update maximum transmission point if the peak is higher
-                    if flat_transmission[peak_index] > max_transmission_point:
-                        max_transmission_point = flat_transmission[peak_index]
-                        max_transmission_wavelength = wavelength_list[peak_index]
-
         if i != len(root.findall('.//WavelengthSweep')) - 1:
             # Find peaks in transmission data
             peaks, _ = find_peaks(flat_transmission, distance=50)  # Adjust distance parameter as needed
@@ -98,6 +86,18 @@ def trans_process(lmz_path):
             # Iterate through peaks and find the one within the specified wavelength range
             for peak_index in peaks:
                 if 1325 <= wavelength_list[peak_index] <= 1340:
+                    # Update maximum transmission point if the peak is higher
+                    if flat_transmission[peak_index] > max_transmission_point:
+                        max_transmission_point = flat_transmission[peak_index]
+                        max_transmission_wavelength = wavelength_list[peak_index]
+
+        if i != len(root.findall('.//WavelengthSweep')) - 1: # 마지막 아닐 때
+            # Find peaks in transmission data
+            peaks, _ = find_peaks(flat_transmission, distance=50)  # Adjust distance parameter as needed
+
+            # Iterate through peaks and find the one within the specified wavelength range
+            for peak_index in peaks:
+                if 1550 <= wavelength_list[peak_index] <= 1565:
                     # Update maximum transmission point if the peak is higher
                     if flat_transmission[peak_index] > max_transmission_point:
                         max_transmission_point = flat_transmission[peak_index]
