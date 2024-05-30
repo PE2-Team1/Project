@@ -13,11 +13,11 @@ def trans_process(lmz_path):
     max_transmission_wavelength = 1550
     max_transmission_wavelength2 = 1565
 
-    # Extract Wavelength and Transmission data
-    wavelength_str = root.find('.//WavelengthSweep/L').text
-    transmission_str = root.find('.//WavelengthSweep/IL').text
-    wavelength_list = np.array([float(w) for w in wavelength_str.split(',')])
-    transmission_list = np.array([float(t) for t in transmission_str.split(',')])
+    for i, wavelengthsweep in enumerate(root.findall('.//WavelengthSweep')):
+        wavelength_str = wavelengthsweep.find('.//L').text
+        transmission_str = wavelengthsweep.find('.//IL').text
+        wavelength_list = [float(w) for w in wavelength_str.split(',')]
+        transmission_list = [float(t) for t in transmission_str.split(',')]
 
     # Find all WavelengthSweep elements
     wavelength_sweeps = root.findall('.//WavelengthSweep')
@@ -85,6 +85,30 @@ def trans_process(lmz_path):
 
             # Iterate through peaks and find the one within the specified wavelength range
             for peak_index in peaks:
+                if 1310 <= wavelength_list[peak_index] <= 1325:
+                    # Update maximum transmission point if the peak is higher
+                    if flat_transmission[peak_index] > max_transmission_point2:
+                        max_transmission_point2 = flat_transmission[peak_index]
+                        max_transmission_wavelength2 = wavelength_list[peak_index]
+
+        if i != len(root.findall('.//WavelengthSweep')) - 1: # 마지막 아닐 때
+            # Find peaks in transmission data
+            peaks, _ = find_peaks(flat_transmission, distance=50)  # Adjust distance parameter as needed
+
+            # Iterate through peaks and find the one within the specified wavelength range
+            for peak_index in peaks:
+                if 1325 <= wavelength_list[peak_index] <= 1340:
+                    # Update maximum transmission point if the peak is higher
+                    if flat_transmission[peak_index] > max_transmission_point:
+                        max_transmission_point = flat_transmission[peak_index]
+                        max_transmission_wavelength = wavelength_list[peak_index]
+
+        if i != len(root.findall('.//WavelengthSweep')) - 1:
+            # Find peaks in transmission data
+            peaks, _ = find_peaks(flat_transmission, distance=50)  # Adjust distance parameter as needed
+
+            # Iterate through peaks and find the one within the specified wavelength range
+            for peak_index in peaks:
                 if 1565 <= wavelength_list[peak_index] <= 1580:
                     # Update maximum transmission point if the peak is higher
                     if flat_transmission[peak_index] > max_transmission_point2:
@@ -100,6 +124,14 @@ def trans_process(lmz_path):
     peak_fit = m * np.array(wavelength_list) + b
 
     # Return the required values
-    return { 'wavelength' : wavelength_list, 'transmission' : transmission_list, 'reference_wave' : reference_wave, 'reference_trans' : reference_trans, 'reference_max' : ref_max, 'ref_fit' : polynomial, 'flat_fit' : poly6, 'peak_fit' : peak_fit, 'r_squared' : r_squared}
+    return { 'wavelength' : wavelength_list,
+             'transmission' : transmission_list,
+             'reference_wave' : reference_wave,
+             'reference_trans' : reference_trans,
+             'reference_max' : ref_max,
+             'ref_fit' : polynomial,
+             'flat_fit' : poly6,
+             'peak_fit' : peak_fit,
+             'r_squared' : r_squared}
     # r_squared을 호출할 때 1차 : r_squared[0], 2차 : r_squared[1] . . .
 
