@@ -2,7 +2,10 @@ import os
 
 
 def get_lmz_path(wafer, device):
-    dat_path = "..\\dat\\"
+    if __name__ == '__main__':
+        dat_path = "..\\dat\\"
+    else:
+        dat_path = "dat\\"
 
     batch_path = dat_path + os.listdir(dat_path)[0] + "\\"
 
@@ -21,10 +24,11 @@ def get_lmz_path(wafer, device):
         for file_name in os.listdir(measure_date_path):
             if any(d in file_name for d in device):
                 lmz_paths.append(measure_date_path + file_name)
-    # print(f"Found {len(lmz_paths)} LMZ data in dat folder: ")
+    print(f"Found {len(lmz_paths)} LMZ data in dat folder.")
     # print(lmz_paths)
     return lmz_paths
 
 
 if __name__ == "__main__":
     lmz = get_lmz_path([], ['LMZC', 'LMZO'])
+    print(lmz)
