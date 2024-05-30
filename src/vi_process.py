@@ -48,4 +48,4 @@ def vi(lmz_path):
 
     return {'voltage': voltage_values, 'abs_current': abs_current, 'final current': final, 'R_squared': R_squared}
 
-print(vi('..\\dat\\HY202103\\D24\\20190531_151815\\HY202103_D24_(2,-3)_LION1_DCM_LMZO.xml'))
+
