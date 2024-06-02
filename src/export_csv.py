@@ -1,7 +1,4 @@
-lmz들 [...]
+import pandas as pd
 
-for lmz in lmz들:
-    a = [process iv]
-    b = process transmission
-    그래프(a,b)
-    csv
+def export_csv(info, iv_result, trans_result):
+    pass

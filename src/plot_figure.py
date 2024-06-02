@@ -2,10 +2,11 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import os
 
-fontsize = 12
+import numpy as np
 
 
 def plot_figure(iv_result, trans_result, lmz_path):
+    fontsize = 12
     device_name = lmz_path.split('\\')[-1].split('.')[0]
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 9))
     # ax1: Measured transmission
@@ -13,9 +14,50 @@ def plot_figure(iv_result, trans_result, lmz_path):
     # ax3: Processed transmission reference
     # ax4: Measured and fitted I-V characteristics
 
-    """
-    transmission 부분 제작중
-    """
+    # --------- Meas Trans --------- #
+    dcbias = trans_result['DCBias']
+    trans_l = trans_result['transmission_l']
+    trans_il = trans_result['transmission_il']
+    ref_l = trans_result['ref_l']
+    ref_il = trans_result['ref_il']
+    for i in range(len(trans_result['DCBias'])):
+        ax1.plot(trans_l[i], trans_il[i], label=dcbias[i])
+    ax1.plot(ref_l, ref_il, label='Reference')
+    ax1.legend(loc='lower center', ncol=4, fontsize=fontsize)
+    ax1.set_ylim(-52, -0)
+    ax1.set_title('Transmission spectra - As measured', fontsize=fontsize)
+    ax1.set_xlabel('Wavelength [nm]', fontsize=fontsize)
+    ax1.set_ylabel('Measured Transmission [dB]', fontsize=fontsize)
+    ax1.tick_params(axis='both', direction='in', labelsize=fontsize)
+    # ------------------------------ #
+    # ---------- Ref Fit ----------- #
+    pred_il = trans_result['ref_pred_il']
+    label = trans_result['ref_fit_label']
+    r2 = trans_result['ref_r2_score_list']
+    for i in range(len(pred_il)):
+        ax2.plot(ref_l, pred_il[i], label=label[i])
+    ax2.plot(ref_l, ref_il, label='Reference')
+
+    ax2.set_title('Reference spectra - Fitted', fontsize=fontsize)
+    ax2.set_xlabel('Wavelength [nm]', fontsize=fontsize)
+    ax2.set_ylabel('Measured Transmission [dB]', fontsize=fontsize)
+    ax2.tick_params(axis='both', direction='in', labelsize=fontsize)
+    ax2.legend(loc="upper left", fontsize=fontsize, ncol=5)
+    ax2.set_ylim(np.min(ref_il) - 4, np.max(ref_il) + 4)
+
+    # ------------------------------ #
+    # --------- Flat Trans --------- #
+    ref_model_list = trans_result['ref_model_list']
+    for i in range(len(trans_result['DCBias'])):
+        ax3.plot(trans_l[i], trans_il[i] - ref_model_list[-1](trans_l[i]), label=dcbias[i])
+    ax3.plot(ref_l, [0]*len(ref_l), '--')
+    ax3.set_title('Transmission spectra - Flattened', fontsize=fontsize)
+    ax3.set_xlabel('Wavelength [nm]', fontsize=fontsize)
+    ax3.set_ylabel('Flat Measured Transmission [dB]', fontsize=fontsize)
+    ax3.tick_params(axis='both', direction='in', labelsize=fontsize)
+    ax3.legend(loc='lower center', ncol=4, fontsize=fontsize)
+    # ------------------------------ #
+    # ------------- IV ------------- #
     voltage = iv_result['voltage']
     abs_current = iv_result['abs_current']
     fit_current = iv_result['final current']
@@ -36,6 +78,7 @@ def plot_figure(iv_result, trans_result, lmz_path):
     ax4.set_xlabel('Voltage [V]', fontsize=fontsize)
     ax4.set_ylabel('Log Absolute Current [A]', fontsize=fontsize)
     ax4.tick_params(axis='both', direction='in', which='both', labelsize=fontsize)
+    # ------------------------------ #
 
     plt.tight_layout()
 
