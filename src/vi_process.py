@@ -22,34 +22,20 @@ def vi(lmz_path):
         Is = params['Is']
         Vt = params['Vt']
         n = params['n']
-
-        # Fit a polynomial to the negative part of the data
-        negative_indices = x < 0
-        if np.any(negative_indices):
-            poly_coeff = np.polyfit(x[negative_indices], data[negative_indices], deg=2)
-            model_negative = np.polyval(poly_coeff, x[negative_indices])
-        else:
-            model_negative = np.array([])
-
-        # Model the positive part with an exponential function
-        positive_indices = x >= 0
-        model_positive = Is * (np.exp(x[positive_indices] / (n * Vt)) - 1) if np.any(positive_indices) else np.array([])
-
-        # Concatenate the models
+        poly_coeff = np.polyfit(x[x < 2], data[x < 2], deg=12)
+        model_negative = np.polyval(poly_coeff, x[x < 2])
+        model_positive = Is * (np.exp(x[x >= 2] / (n * Vt)) - 1)
         model = np.concatenate((model_negative, model_positive))
-
         if data is None:
             return model
         else:
             return model - data
 
-    # Set initial parameters
     pars = Parameters()
     pars.add('Is', value=10 ** -8)
     pars.add('Vt', value=0.026)
     pars.add('n', value=1, vary=False)
 
-    # Perform the minimization
     fitter = Minimizer(mob, pars, fcn_args=(voltage_values, current_values))
     result = fitter.minimize()
     final = abs_current + result.residual
