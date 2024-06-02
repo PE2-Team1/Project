@@ -132,6 +132,6 @@ def trans_process(lmz_path):
              'ref_fit' : polynomial,
              'flat_fit' : poly6,
              'peak_fit' : peak_fit,
-             'r_squared' : r_squared}
+             'r_squared' : r_squared_values}
     # r_squared을 호출할 때 1차 : r_squared[0], 2차 : r_squared[1] . . .
 
