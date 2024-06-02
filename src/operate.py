@@ -1,20 +1,20 @@
 from src.get_lmz_path import get_lmz_path
 from src.vi_process import vi
 from src.plot_figure import plot_figure
-from src.trans_process import trans_process
-from src.dataframe import make_new_data, add_dict, export, data
+from src.trans_process2 import *
+from src.dataframe import make_new_data, append_data, export, data
 
 
 def run(info, wafer, device, save_figure, export_csv):
     lmz_paths = get_lmz_path(wafer, device)
     for lmz_path in lmz_paths:
         vi_result = vi(lmz_path)
-        trans_result = 0
+        trans_result = trans_process(lmz_path)
         if save_figure:
             plot_figure(vi_result, trans_result, lmz_path)
         if export_csv:
             result_dict = make_new_data(lmz_path, info, vi_result, trans_result)
-            add_dict(result_dict)
+            append_data(result_dict)
     if export_csv:
         export(data)
 
