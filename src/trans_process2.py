@@ -56,13 +56,34 @@ def fit_ref(_ref):
     return ref_models, predicted_il_list, fit_label_list, ref_r2_score_list
 
 
-def flatten(_transmission, _ref):
-    pass
+def flatten(_transmission, _ref_models):
+    peaks_l, peaks_il = [], []
+    for b in range(len(_transmission['vol'])):
+        bias_trans_l = _transmission['l'][b]
+        bias_trans_il = _transmission['il'][b] - _ref_models[-1](_transmission['l'][b])
+        max_il = np.max(bias_trans_il)
+        max_l = bias_trans_l[np.where(bias_trans_il == max_il)[0][0]]
+        peaks_l.append([max_l])
+        peaks_il.append([max_il])
+        if max_l > 1530:
+            for i in range(2):
+                peaks_il[b].append(peak_il := float(np.max(bias_trans_il[bias_trans_l > max_l + i * 10])))
+                peaks_l[b].append(bias_trans_l[np.where(bias_trans_il == peak_il)[0][0]])
+        else:
+            for i in range(2):
+                peaks_il[b].append(peak_il := float(np.max(bias_trans_il[bias_trans_l > max_l + i * 9])))
+                peaks_l[b].append(bias_trans_l[np.where(bias_trans_il == peak_il)[0][0]])
+    peak_models = [np.poly1d(np.polyfit(peaks_l[j], peaks_il[j], 1)) for j in range(len(peaks_l))]
+    flat_trans = [
+        _transmission['il'][k] - _ref_models[-1](_transmission['l'][k]) - peak_models[k](_transmission['l'][k]) for k in
+        range(len(peaks_l))]
+    return flat_trans
 
 
 def trans_process(lmz_path):
     transmission, ref = parse_trans(lmz_path)
     ref_models, predicted_il_list, fit_label_list, ref_r2_score_list = fit_ref(ref)
+    flat_trans = flatten(transmission, ref_models)
     result = {
         'DCBias': transmission['vol'],
         'transmission_l': transmission['l'],
@@ -73,12 +94,13 @@ def trans_process(lmz_path):
         'ref_model_list': ref_models,
         'ref_pred_il': predicted_il_list,
         'ref_fit_label': fit_label_list,
-        'ref_r2_score_list': ref_r2_score_list
+        'ref_r2_score_list': ref_r2_score_list,
+        'flat_transmission': flat_trans
     }
     return result
 
 
 if __name__ == '__main__':
     path = '../dat/HY202103/D07/20190715_190855/HY202103_D07_(0,0)_LION1_DCM_LMZC.xml'
-    _, ref = parse_trans(path)
-    print(fit_ref(ref))
+    __, __ref = parse_trans(path)
+    print(fit_ref(__ref))
