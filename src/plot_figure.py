@@ -52,8 +52,9 @@ def plot_figure(iv_result, trans_result, lmz_path):
     # ------------------------------ #
     # --------- Flat Trans --------- #
     ref_model_list = trans_result['ref_model_list']
+    flat_trans = trans_result['flat_transmission']
     for i in range(len(trans_result['DCBias'])):
-        ax3.plot(trans_l[i], trans_il[i] - ref_model_list[-1](trans_l[i]), label=dcbias[i])
+        ax3.plot(trans_l[i], flat_trans[i], label=dcbias[i])
     ax3.plot(ref_l, [0]*len(ref_l), '--')
     ax3.set_title('Transmission spectra - Flattened', fontsize=fontsize)
     ax3.set_xlabel('Wavelength [nm]', fontsize=fontsize)
