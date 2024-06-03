@@ -3,7 +3,7 @@ import numpy as np
 from scipy.signal import find_peaks
 
 
-def parse_trans(lmz_path):
+def parse_trans(lmz_path): # XML 파싱하고 데이터를 딕셔너리에 저장
     _transmission = {
         'vol': [],
         'l': [],
@@ -13,7 +13,7 @@ def parse_trans(lmz_path):
     root = ET.parse(lmz_path).getroot()
     wavelength_sweep = root.findall('.//WavelengthSweep')
 
-    for ws in wavelength_sweep[:-1]:
+    for ws in wavelength_sweep[:-1]: # 마지막 요소를 제외한 모든 요소
         _transmission['vol'].append(ws.attrib['DCBias'] + "V")
         _transmission['l'].append(np.array([float(_l) for _l in ws.find("L").text.split(",")]))
         _transmission['il'].append(np.array([float(_il) for _il in ws.find("IL").text.split(",")]))
@@ -52,7 +52,6 @@ def fit_ref(_ref):
         ref_r2_score_list.append(1 - ssr / sst)
 
     return ref_models, predicted_il_list, fit_label_list, ref_r2_score_list
-
 
 def flatten(_transmission, _ref):
 
