@@ -76,19 +76,19 @@ def make_new_data(lmz_path, info, iv, trans):
 def export(_data):
     df = pd.DataFrame(_data)
     df2 = df.drop(columns=['XML Path'], inplace=False)
-    # 새 워크북 생성
+    # Create new workbook
     wb = Workbook()
     ws = wb.active
 
-    # CSV 데이터 엑셀 시트에 쓰기
+    # Write data into Excel sheet
     for r in dataframe_to_rows(df2, index=False, header=True):
         ws.append(r)
 
-    # 링크 추가할 셀 지정
+    # Adding hyperlinks
     i = 2
     while i <= len(_data['Batch']) + 1:
-        row_xl = i  # 링크를 추가할 행 번호 (예: 두 번째 행)
-        col_xl = 21  # 링크를 추가할 열 번호 (예: 세 번째 열)
+        row_xl = i
+        col_xl = 21
         batch = _data['Batch'][i - 2]
         wafer = _data['Wafer'][i - 2]
         date = _data['XML Path'][i - 2].split('\\')[3]
@@ -98,14 +98,14 @@ def export(_data):
         ts = _data['TestSite'][i - 2]
 
         file_path = f'{batch}\\{wafer}\\{date}\\{batch}_{wafer}_({row},{col})_{mask}_{ts}.png'
-        cell = ws.cell(row=row_xl, column=col_xl, value='Click here to open image')
+        cell = ws.cell(row=row_xl, column=col_xl, value='Click here to open image')  # Make display text
 
-        # 하이퍼링크와 스타일 추가
+        # Style hyperlink
         cell.hyperlink = file_path
         cell.font = Font(color="0000FF", underline="single")
         i += 1
 
-    # 엑셀 파일 저장
+    # Save Excel file
     if __name__ == 'src.dataframe':
         wb.save('res\\result.xlsx')
     else:

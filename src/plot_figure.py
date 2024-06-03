@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import os
-
 import numpy as np
 
 
@@ -98,4 +97,3 @@ def plot_figure(iv_result, trans_result, lmz_path):
             file_name = f'..\\res\\{batch}\\{wafer}\\{date}\\{device_name}(1).png'
         plt.savefig(file_name)
     plt.close()
-    # plt.show()

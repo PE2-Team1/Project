@@ -1,6 +1,5 @@
 import xml.etree.ElementTree as ET
 import numpy as np
-from scipy.signal import find_peaks
 import warnings
 
 
@@ -29,7 +28,7 @@ def parse_trans(lmz_path):
 
 
 def to_ordinal(n) -> str:
-    # 기수를 서수로 바꿈
+    # cardinal to ordinal
     if n % 10 == 1 and n % 100 != 11:
         return str(n) + "st"
     elif n % 10 == 2 and n % 100 != 12:
