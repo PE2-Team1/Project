@@ -26,6 +26,22 @@ def get_lmz_path(wafer, device):
                 lmz_paths.append(measure_date_path + file_name)
     print(f"Found {len(lmz_paths)} LMZ data in dat folder.")
     # print(lmz_paths)
+
+    for p in lmz_paths:
+        try:
+            if __name__ == '__main__':
+                _batch = p.split('\\')[2]
+                _wafer = p.split('\\')[3]
+                _date = p.split('\\')[4]
+                os.makedirs(f"..\\res\\{_batch}\\{_wafer}\\{_date}")
+            else:
+                _batch = p.split('\\')[1]
+                _wafer = p.split('\\')[2]
+                _date = p.split('\\')[3]
+                os.makedirs(f"res\\{_batch}\\{_wafer}\\{_date}")
+        except FileExistsError:
+            continue
+
     return lmz_paths
 
 

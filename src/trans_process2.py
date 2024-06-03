@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import numpy as np
 from scipy.signal import find_peaks
+import warnings
 
 
 def parse_trans(lmz_path):
@@ -40,6 +41,7 @@ def to_ordinal(n) -> str:
 
 
 def fit_ref(_ref):
+    warnings.filterwarnings('ignore', message='Polyfit may be poorly conditioned')
     fit_degrees = range(1, 7)
     ref_models = [np.poly1d(np.polyfit(_ref['l'], _ref['il'], deg)) for deg in fit_degrees]
     predicted_il_list = np.array([ref_models[i](_ref['l']) for i in range(len(ref_models))])
@@ -55,7 +57,6 @@ def fit_ref(_ref):
 
 
 def flatten(_transmission, _ref):
-
     pass
 
 
@@ -75,6 +76,7 @@ def trans_process(lmz_path):
         'ref_r2_score_list': ref_r2_score_list
     }
     return result
+
 
 if __name__ == '__main__':
     path = '../dat/HY202103/D07/20190715_190855/HY202103_D07_(0,0)_LION1_DCM_LMZC.xml'

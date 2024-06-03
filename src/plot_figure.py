@@ -7,7 +7,11 @@ import numpy as np
 
 def plot_figure(iv_result, trans_result, lmz_path):
     fontsize = 12
-    device_name = lmz_path.split('\\')[-1].split('.')[0]
+    lmz_path_split = lmz_path.split('\\')
+    batch = lmz_path_split[1]
+    wafer = lmz_path_split[2]
+    date = lmz_path_split[3]
+    device_name = lmz_path_split[4].split('.')[0]
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 9))
     # ax1: Measured transmission
     # ax2: Fitted transmission reference
@@ -83,14 +87,14 @@ def plot_figure(iv_result, trans_result, lmz_path):
     plt.tight_layout()
 
     if __name__ == 'src.plot_figure':
-        file_name = f'res\\{device_name}.png'
+        file_name = f'res\\{batch}\\{wafer}\\{date}\\{device_name}.png'
         if file_name.split('\\')[-1] in os.listdir('res\\'):
-            file_name = f'res\\{device_name}(1).png'
+            file_name = f'res\\{batch}\\{wafer}\\{date}\\{device_name}(1).png'
         plt.savefig(file_name)
     else:
-        file_name = f'..\\res\\{device_name}.png'
+        file_name = f'..\\res\\{batch}\\{wafer}\\{date}\\{device_name}.png'
         if file_name.split('\\')[-1] in os.listdir('..\\res\\'):
-            file_name = f'..\\res\\{device_name}(1).png'
+            file_name = f'..\\res\\{batch}\\{wafer}\\{date}\\{device_name}(1).png'
         plt.savefig(file_name)
     plt.close()
     # plt.show()

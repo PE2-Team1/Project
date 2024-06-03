@@ -3,11 +3,14 @@ from src.vi_process import vi
 from src.plot_figure import plot_figure
 from src.trans_process2 import *
 from src.dataframe import make_new_data, append_data, export, data
+import os
 
 
 def run(info, wafer, device, save_figure, export_csv):
     lmz_paths = get_lmz_path(wafer, device)
+    i = 1
     for lmz_path in lmz_paths:
+        print(f"Processing... {i}/{len(lmz_paths)}")
         vi_result = vi(lmz_path)
         trans_result = trans_process(lmz_path)
         if save_figure:
@@ -15,6 +18,8 @@ def run(info, wafer, device, save_figure, export_csv):
         if export_csv:
             result_dict = make_new_data(lmz_path, info, vi_result, trans_result)
             append_data(result_dict)
+
+        i += 1
     if export_csv:
         export(data)
 
