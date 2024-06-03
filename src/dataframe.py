@@ -20,7 +20,7 @@ data = {
     'Column': [],
     'Error Flag': [],
     'Error Desc.': [],
-    'Analysis Wavelength': [],
+    'Analysis Wavelength (nm)': [],
     'Rsq of Ref. spectrum (6th)': [],
     'Max transmission of Ref. spectrum (dBm)': [],
     'Rsq of IV': [],
@@ -54,11 +54,11 @@ def make_new_data(lmz_path, info, iv, trans):
         'Script Version': info['script_version'],
         'Script Owner': info['script_owner'],
         'Operator': info['operator_name'],
-        'Row': test_site_info['DieRow'],
-        'Column': test_site_info['DieColumn'],
+        'Row': int(test_site_info['DieRow']),
+        'Column': int(test_site_info['DieColumn']),
         'Error Flag': "",
         'Error Desc.': "",
-        'Analysis Wavelength': des_wavelength,
+        'Analysis Wavelength (nm)': int(des_wavelength),
         'Rsq of Ref. spectrum (6th)': trans['ref_r2_score_list'][-1],
         'Max transmission of Ref. spectrum (dBm)': trans['ref_max'],
         'Rsq of IV': iv['R_squared'],
@@ -67,15 +67,22 @@ def make_new_data(lmz_path, info, iv, trans):
         'Plot Image': '',
         'XML Path': lmz_path
     }
+    if new_data['Rsq of Ref. spectrum (6th)'] < 0.998:
+        new_data['Error Flag'] = 1
+        new_data['Error Desc.'] = 'Low Rsq of Ref.'
     return new_data
 
 
 def export(_data):
     df = pd.DataFrame(_data)
-
+    df2 = df.drop(columns=['XML Path'], inplace=False)
     # 새 워크북 생성
     wb = Workbook()
     ws = wb.active
+
+    # CSV 데이터 엑셀 시트에 쓰기
+    for r in dataframe_to_rows(df2, index=False, header=True):
+        ws.append(r)
 
     # 링크 추가할 셀 지정
     i = 2
@@ -91,17 +98,12 @@ def export(_data):
         ts = _data['TestSite'][i - 2]
 
         file_path = f'{batch}\\{wafer}\\{date}\\{batch}_{wafer}_({row},{col})_{mask}_{ts}.png'
-        cell = ws.cell(row=row_xl, column=col_xl, value='Plot Image')
+        cell = ws.cell(row=row_xl, column=col_xl, value='Click here to open image')
 
         # 하이퍼링크와 스타일 추가
         cell.hyperlink = file_path
         cell.font = Font(color="0000FF", underline="single")
         i += 1
-
-    # CSV 데이터 엑셀 시트에 쓰기
-    df.drop(columns=['XML Path'], inplace=True)
-    for r in dataframe_to_rows(df, index=False, header=True):
-        ws.append(r)
 
     # 엑셀 파일 저장
     if __name__ == 'src.dataframe':
