@@ -15,7 +15,7 @@ def plot_figure(iv_result, trans_result, lmz_path):
     # ax4: Measured and fitted I-V characteristics
 
     # --------- Meas Trans --------- #
-    dcbias = trans_result['DCBias']
+    dcbias = trans_result['DCBias'] # trans_result 정의는 어디에 ?
     trans_l = trans_result['transmission_l']
     trans_il = trans_result['transmission_il']
     ref_l = trans_result['ref_l']
@@ -48,7 +48,7 @@ def plot_figure(iv_result, trans_result, lmz_path):
     # ------------------------------ #
     # --------- Flat Trans --------- #
     ref_model_list = trans_result['ref_model_list']
-    for i in range(len(trans_result['DCBias'])):
+    for i in range(len(trans_result['DCBias'])): # 이 부분은 뭘 한 것 ?
         ax3.plot(trans_l[i], trans_il[i] - ref_model_list[-1](trans_l[i]), label=dcbias[i])
     ax3.plot(ref_l, [0]*len(ref_l), '--')
     ax3.set_title('Transmission spectra - Flattened', fontsize=fontsize)
