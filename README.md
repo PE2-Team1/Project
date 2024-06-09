@@ -1,5 +1,5 @@
 # LMZ processor
-Process data from Lumped Mach-Zehnder Modulators
+Processes data from Lumped Mach-Zehnder Modulators
 
 Made by Team 1
 
@@ -18,7 +18,7 @@ Made by Team 1
 
 ### Scripts
 - `run.py`
-  - Includes script informations and run options.
+  - Includes script information and run options.
 
 Scripts below should be executed from `run.py`.
 - `get_lmz_path.py` 
@@ -29,7 +29,8 @@ Scripts below should be executed from `run.py`.
 - `vi_process.py`
   - Gets Current-Voltage data and performs polynomial fitting. 
 - `trans_process.py`
-  - Gets transmission spectra + reference and performs reference fitting and transmission flattening. 
+  - Gets transmission spectra + reference and performs reference fitting.
+  - `trans_process2.py` supports transmission flattening. 
 - `plot_figure.py`
   - Plots transmission spectra, fitted reference, flattened transmission and I-V characteristics.
   - Saves plot image in `res` folder.
