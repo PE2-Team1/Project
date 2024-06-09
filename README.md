@@ -63,7 +63,7 @@ $ conda install pandas numpy lmfit matplotlib scipy openpyxl
 
 **Step 2:** Put LMZ measurement XML data into `dat` folder
 
-File structure must be like below:
+File structure must be like below (currently supports for only 1 Batch folder):
 ```
 dat/
 └── Batch/
