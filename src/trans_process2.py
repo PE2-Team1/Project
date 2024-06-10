@@ -93,7 +93,7 @@ def trans_process(lmz_path):
         'ref_model_list': ref_models,
         'ref_pred_il': predicted_il_list,
         'ref_fit_label': fit_label_list,
-        'ref_r2_score_list': ref_r2_score_list,
+        'ref_r2_score_list': ref_r2_score_list, #r2 6th 하나만 가져오는거 할지 ?
         'flat_transmission': flat_trans
     }
     return result
