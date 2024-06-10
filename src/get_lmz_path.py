@@ -7,7 +7,7 @@ def get_lmz_path(wafer, device):
     else:
         dat_path = "dat\\"
 
-    batch_path = dat_path + os.listdir(dat_path)[0] + "\\"
+    batch_path = dat_path + os.listdir(dat_path)[1] + "\\"
 
     if not wafer:
         wafer = os.listdir(batch_path)
