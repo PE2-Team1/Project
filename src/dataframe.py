@@ -67,14 +67,29 @@ def make_new_data(lmz_path, info, iv, trans):
         'Plot Image': '',
         'XML Path': lmz_path
     }
-    if new_data['Rsq of Ref. spectrum (6th)'] < 0.998:
-        new_data['Error Flag'] = 1
-        new_data['Error Desc.'] = 'Low Rsq of Ref.'
     return new_data
 
 
 def export(_data, _analysis_time):
     df = pd.DataFrame(_data)
+
+    # Calculate mean and standard deviation of ref_max
+    ref_max_mean = df['Max transmission of Ref. spectrum (dBm)'].mean()
+    ref_max_std = df['Max transmission of Ref. spectrum (dBm)'].std()
+
+    # Flag errors based on r2 and ref_max deviation
+    def flag_errors(row):
+        errors = []
+        if row['Rsq of Ref. spectrum (6th)'] < 0.998:
+            errors.append('Low Rsq of Ref.')
+        if abs(row['Max transmission of Ref. spectrum (dBm)'] - ref_max_mean) > 2 * ref_max_std:
+            errors.append('Deviation Max of Ref')
+        return ', '.join(errors)
+
+    df['Error Desc.'] = df.apply(flag_errors, axis=1)
+    df['Error Flag'] = df['Error Desc.'].apply(lambda
+                                                   x: '1,2' if 'Low Rsq of Ref.' in x and 'Deviation Max of Ref' in x else '1' if 'Low Rsq of Ref.' in x else '2' if 'Deviation Max of Ref' in x else '')
+
     df2 = df.drop(columns=['XML Path'], inplace=False)
     # Create new workbook
     wb = Workbook()
@@ -111,3 +126,7 @@ def export(_data, _analysis_time):
         wb.save(f'res\\{_analysis_time}\\{_analysis_time}_result.xlsx')
     else:
         wb.save(f'..\\res\\{_analysis_time}\\{_analysis_time}_result.xlsx')
+
+# Example usage with the provided data and paths
+# append_data(make_new_data('path/to/xml', info_dict, iv_dict, trans_dict))
+# export(data, 'analysis_time')
