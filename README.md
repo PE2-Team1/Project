@@ -94,3 +94,18 @@ dat/
 
 **Step 5** Check process results in `res` folder
 
+## Made by:
+
+#### -Kim Beomseo
+#### -Son Eunji
+#### -Lee Hyunseok
+ 
+
+
+## Contact Email
+
+| name     | email                |
+|----------|----------------------|
+| Lee hyeonseok | hs7681@hanyang.ac.kr |
+| Kim Bumseo |      |
+|  Son Eunji         |   |
