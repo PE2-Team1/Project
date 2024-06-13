@@ -120,7 +120,8 @@ def export(_data):
         i += 1
 
     # Save Excel file
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     if __name__ == 'src.dataframe':
-        wb.save('res\\result.xlsx')
+        wb.save(f'res\\analysis_result_{timestamp}.xlsx')
     else:
-        wb.save('..\\res\\result.xlsx')
+        wb.save(f'..\\res\\analysis_result_{timestamp}\\.xlsx')
