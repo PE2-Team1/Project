@@ -67,27 +67,13 @@ def make_new_data(lmz_path, info, iv, trans):
         'Plot Image': '',
         'XML Path': lmz_path
     }
-
-    error_flags = []
-    error_descs = []
-
     if new_data['Rsq of Ref. spectrum (6th)'] < 0.998:
-        error_flags.append(1)
-        error_descs.append('Low Rsq of Ref.')
-
-    if new_data['Max transmission of Ref. spectrum (dBm)'] < -20 or new_data[
-        'Max transmission of Ref. spectrum (dBm)'] > 0:
-        error_flags.append(2)
-        error_descs.append('Anomal ref_max')
-
-    if error_flags:
-        new_data['Error Flag'] = ','.join(map(str, error_flags))
-        new_data['Error Desc.'] = ', '.join(error_descs)
-
+        new_data['Error Flag'] = 1
+        new_data['Error Desc.'] = 'Low Rsq of Ref.'
     return new_data
 
 
-def export(_data):
+def export(_data, _analysis_time):
     df = pd.DataFrame(_data)
     df2 = df.drop(columns=['XML Path'], inplace=False)
     # Create new workbook
@@ -120,7 +106,8 @@ def export(_data):
         i += 1
 
     # Save Excel file
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     if __name__ == 'src.dataframe':
-        wb.save('res\\result.xlsx')
+        wb.save(f'res\\{_analysis_time}\\{_analysis_time}_result.xlsx')
     else:
-        wb.save('..\\res\\result.xlsx')
+        wb.save(f'..\\res\\{_analysis_time}\\{_analysis_time}_result.xlsx')
