@@ -9,8 +9,6 @@ Made by Team 1
   - Data to be analyzed are put here.
 - `doc`
   - Jupyter notebook file for analysis visualization is here.
-- `ppt`
-  - The final presentation PPT file is here.
 - `res`
   - Resultant plot images and Excel file are saved here.
 - `src`
