@@ -67,9 +67,23 @@ def make_new_data(lmz_path, info, iv, trans):
         'Plot Image': '',
         'XML Path': lmz_path
     }
+
+    error_flags = []
+    error_descs = []
+
     if new_data['Rsq of Ref. spectrum (6th)'] < 0.998:
-        new_data['Error Flag'] = 1
-        new_data['Error Desc.'] = 'Low Rsq of Ref.'
+        error_flags.append(1)
+        error_descs.append('Low Rsq of Ref.')
+
+    if new_data['Max transmission of Ref. spectrum (dBm)'] < -20 or new_data[
+        'Max transmission of Ref. spectrum (dBm)'] > 0:
+        error_flags.append(2)
+        error_descs.append('Anomal ref_max')
+
+    if error_flags:
+        new_data['Error Flag'] = ','.join(map(str, error_flags))
+        new_data['Error Desc.'] = ', '.join(error_descs)
+
     return new_data
 
 
