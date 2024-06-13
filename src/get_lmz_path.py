@@ -1,7 +1,11 @@
 import os
+from datetime import datetime
+
+analysis_time = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
 def get_lmz_path(wafer, device):
+    global analysis_time
     if __name__ == '__main__':
         dat_path = "..\\dat\\"
     else:
@@ -33,12 +37,12 @@ def get_lmz_path(wafer, device):
                 _batch = p.split('\\')[2]
                 _wafer = p.split('\\')[3]
                 _date = p.split('\\')[4]
-                os.makedirs(f"..\\res\\{_batch}\\{_wafer}\\{_date}")
+                os.makedirs(f"..\\res\\{analysis_time}\\{_batch}\\{_wafer}\\{_date}")
             else:
                 _batch = p.split('\\')[1]
                 _wafer = p.split('\\')[2]
                 _date = p.split('\\')[3]
-                os.makedirs(f"res\\{_batch}\\{_wafer}\\{_date}")
+                os.makedirs(f"res\\{analysis_time}\\{_batch}\\{_wafer}\\{_date}")
         except FileExistsError:
             continue
 

@@ -73,7 +73,7 @@ def make_new_data(lmz_path, info, iv, trans):
     return new_data
 
 
-def export(_data):
+def export(_data, _analysis_time):
     df = pd.DataFrame(_data)
     df2 = df.drop(columns=['XML Path'], inplace=False)
     # Create new workbook
@@ -107,6 +107,6 @@ def export(_data):
 
     # Save Excel file
     if __name__ == 'src.dataframe':
-        wb.save('res\\result.xlsx')
+        wb.save(f'res\\{_analysis_time}\\{_analysis_time}_result.xlsx')
     else:
-        wb.save('..\\res\\result.xlsx')
+        wb.save(f'..\\res\\{_analysis_time}\\{_analysis_time}_result.xlsx')

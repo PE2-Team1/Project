@@ -3,7 +3,8 @@ import matplotlib.ticker as ticker
 import os
 import numpy as np
 
-def plot_figure(iv_result, trans_result, lmz_path):
+
+def plot_figure(iv_result, trans_result, lmz_path, _analysis_time):
     fontsize = 14
     title_fontsize = 16
     lmz_path_split = lmz_path.split('\\')
@@ -54,7 +55,7 @@ def plot_figure(iv_result, trans_result, lmz_path):
     flat_trans = trans_result['flat_transmission']
     for i in range(len(trans_result['DCBias'])):
         ax3.plot(trans_l[i], flat_trans[i], label=dcbias[i])
-    ax3.plot(ref_l, [0]*len(ref_l), '--', color='black')
+    ax3.plot(ref_l, [0] * len(ref_l), '--', color='black')
     ax3.set_title('Transmission Spectra - Flattened', fontsize=fontsize)
     ax3.set_xlabel('Wavelength [nm]', fontsize=fontsize)
     ax3.set_ylabel('Flat Measured Transmission [dB]', fontsize=fontsize)
@@ -70,7 +71,8 @@ def plot_figure(iv_result, trans_result, lmz_path):
     ax4.scatter(voltage, abs_current, label='Measured', color='blue')
     ax4.plot(voltage, fit_current, 'r', label='Fitted')
 
-    ax4.annotate(f"R$^2$={iv_r_squared:.4f}", xy=(0.95, 0.95), xycoords='axes fraction', fontsize=fontsize, verticalalignment='top', horizontalalignment='right')
+    ax4.annotate(f"R$^2$={iv_r_squared:.4f}", xy=(0.95, 0.95), xycoords='axes fraction', fontsize=fontsize,
+                 verticalalignment='top', horizontalalignment='right')
     ax4.set_yscale('log')
     ax4.yaxis.set_major_locator(ticker.LogLocator(base=10, numticks=10))
     ax4.yaxis.set_minor_locator(ticker.LogLocator(base=10, subs='auto', numticks=10))
@@ -81,16 +83,16 @@ def plot_figure(iv_result, trans_result, lmz_path):
     ax4.tick_params(axis='both', direction='in', which='both', labelsize=fontsize)
     ax4.grid(True, which='both', linestyle='--', alpha=0.6)
 
-    plt.tight_layout(rect=[0, 0, 1, 0.96])
+    plt.tight_layout(rect=(0, 0, 1, 0.96))
 
     if __name__ == 'src.plot_figure':
-        file_path = f'res\\{batch}\\{wafer}\\{date}\\{device_name}.png'
+        file_path = f'res\\{_analysis_time}\\{batch}\\{wafer}\\{date}\\{device_name}.png'
         if file_path.split('\\')[-1] in os.listdir('res\\'):
-            file_path = f'res\\{batch}\\{wafer}\\{date}\\{device_name}(1).png'
+            file_path = f'res\\{_analysis_time}\\{batch}\\{wafer}\\{date}\\{device_name}(1).png'
         plt.savefig(file_path)
     else:
-        file_path = f'..\\res\\{batch}\\{wafer}\\{date}\\{device_name}.png'
+        file_path = f'..\\res\\{_analysis_time}\\{batch}\\{wafer}\\{date}\\{device_name}.png'
         if file_path.split('\\')[-1] in os.listdir('..\\res\\'):
-            file_path = f'..\\res\\{batch}\\{wafer}\\{date}\\{device_name}(1).png'
+            file_path = f'..\\res\\{_analysis_time}\\{batch}\\{wafer}\\{date}\\{device_name}(1).png'
         plt.savefig(file_path)
     plt.close()
