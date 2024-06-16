@@ -17,8 +17,6 @@ The Program is a tool for analyzing and visualizing the characteristics of semic
   - Data to be analyzed are put here.
 - `doc`
   - Jupyter notebook file for analysis visualization is here.
-- `ppt`
-  - The final presentation PPT file is here.
 - `res`
   - Resultant plot images and Excel file are saved here.
 - `src`
