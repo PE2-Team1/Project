@@ -1,7 +1,7 @@
 from src.get_lmz_path import get_lmz_path, analysis_time
 from src.vi_process import vi
 from src.plot_figure import plot_figure
-from src.trans_process2 import *
+from src.trans_process import *
 from src.dataframe import make_new_data, append_data, export, data
 
 
