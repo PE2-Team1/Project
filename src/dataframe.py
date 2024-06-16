@@ -120,7 +120,7 @@ def export(_data, _analysis_time):
         cell.font = Font(color="0000FF", underline="single")
         i += 1
 
-    # Save Excel file
+    # Save Excel file.
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     if __name__ == 'src.dataframe':
         wb.save(f'res\\{_analysis_time}\\{_analysis_time}_result.xlsx')
