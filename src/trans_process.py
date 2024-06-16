@@ -1,137 +1,105 @@
-import xml.etree.ElementTree as elemTree
+import xml.etree.ElementTree as ET
 import numpy as np
-from scipy.signal import find_peaks
+import warnings
+
+
+def parse_trans(lmz_path):
+    _transmission = {
+        'vol': [],
+        'l': [],
+        'il': []
+    }
+
+    root = ET.parse(lmz_path).getroot()
+    wavelength_sweep = root.findall('.//WavelengthSweep')
+
+    for ws in wavelength_sweep[:-1]:
+        _transmission['vol'].append(ws.attrib['DCBias'] + "V")
+        _transmission['l'].append(np.array([float(_l) for _l in ws.find("L").text.split(",")]))
+        _transmission['il'].append(np.array([float(_il) for _il in ws.find("IL").text.split(",")]))
+
+    ref_ws = wavelength_sweep[-1]
+    _ref = {
+        'l': np.array([float(_l) for _l in ref_ws.find("L").text.split(",")]),
+        'il': np.array([float(_il) for _il in ref_ws.find("IL").text.split(",")])
+    }
+
+    return _transmission, _ref
+
+
+def to_ordinal(n) -> str:
+    # cardinal to ordinal
+    if n % 10 == 1 and n % 100 != 11:
+        return str(n) + "st"
+    elif n % 10 == 2 and n % 100 != 12:
+        return str(n) + "nd"
+    elif n % 10 == 3 and n % 100 != 13:
+        return str(n) + "rd"
+    else:
+        return str(n) + "th"
+
+
+def fit_ref(_ref):
+    warnings.filterwarnings('ignore', message='Polyfit may be poorly conditioned')
+    fit_degrees = range(1, 7)
+    ref_models = [np.poly1d(np.polyfit(_ref['l'], _ref['il'], deg)) for deg in fit_degrees]
+    predicted_il_list = np.array([ref_models[i](_ref['l']) for i in range(len(ref_models))])
+    fit_label_list = [to_ordinal(i) for i in fit_degrees]
+
+    ref_r2_score_list = []
+    for i in range(len(ref_models)):
+        sst = np.sum((_ref['il'] - np.mean(_ref['il'])) ** 2)
+        ssr = np.sum((_ref['il'] - predicted_il_list[i]) ** 2)
+        ref_r2_score_list.append(1 - ssr / sst)
+
+    return ref_models, predicted_il_list, fit_label_list, ref_r2_score_list
+
+
+def flatten(_transmission, _ref_models):
+    peaks_l, peaks_il = [], []
+    for b in range(len(_transmission['vol'])):
+        bias_trans_l = _transmission['l'][b]
+        bias_trans_il = _transmission['il'][b] - _ref_models[-1](_transmission['l'][b])
+        max_il = np.max(bias_trans_il)
+        max_l = bias_trans_l[np.where(bias_trans_il == max_il)[0][0]]
+        peaks_l.append([max_l])
+        peaks_il.append([max_il])
+        if max_l > 1530:
+            for i in range(2):
+                peaks_il[b].append(peak_il := float(np.max(bias_trans_il[bias_trans_l > max_l + i * 10])))
+                peaks_l[b].append(bias_trans_l[np.where(bias_trans_il == peak_il)[0][0]])
+        else:
+            for i in range(2):
+                peaks_il[b].append(peak_il := float(np.max(bias_trans_il[bias_trans_l > max_l + i * 9])))
+                peaks_l[b].append(bias_trans_l[np.where(bias_trans_il == peak_il)[0][0]])
+    peak_models = [np.poly1d(np.polyfit(peaks_l[j], peaks_il[j], 1)) for j in range(len(peaks_l))]
+    flat_trans = [
+        _transmission['il'][k] - _ref_models[-1](_transmission['l'][k]) - peak_models[k](_transmission['l'][k]) for k in
+        range(len(peaks_l))]
+    return flat_trans
+
 
 def trans_process(lmz_path):
-    # Parse the XML file and get the root element
-    tree = elemTree.parse(lmz_path)
-    root = tree.getroot()
+    transmission, ref = parse_trans(lmz_path)
+    ref_models, predicted_il_list, fit_label_list, ref_r2_score_list = fit_ref(ref)
+    flat_trans = flatten(transmission, ref_models)
+    result = {
+        'DCBias': transmission['vol'],
+        'transmission_l': transmission['l'],
+        'transmission_il': transmission['il'],
+        'ref_l': ref['l'],
+        'ref_il': ref['il'],
+        'ref_max': np.max(ref['il']),
+        'ref_model_list': ref_models,
+        'ref_pred_il': predicted_il_list,
+        'ref_fit_label': fit_label_list,
+        'ref_r2_score_list': ref_r2_score_list, #r2 6th 하나만 가져오는거 할지 ?
+        'flat_transmission': flat_trans
+    }
+    return result
 
-    # Initialize variables to store the maximum transmission points and their corresponding wavelengths
-    max_transmission_point = -50
-    max_transmission_point2 = -50
-    max_transmission_wavelength = 1550
-    max_transmission_wavelength2 = 1565
 
-    for i, wavelengthsweep in enumerate(root.findall('.//WavelengthSweep')):
-        wavelength_str = wavelengthsweep.find('.//L').text
-        transmission_str = wavelengthsweep.find('.//IL').text
-        wavelength_list = [float(w) for w in wavelength_str.split(',')]
-        transmission_list = [float(t) for t in transmission_str.split(',')]
-
-    # Find all WavelengthSweep elements
-    wavelength_sweeps = root.findall('.//WavelengthSweep')
-
-    # Get the last WavelengthSweep element
-    last_wavelength_sweep = wavelength_sweeps[-1]
-
-    # Extract L and IL data from the last WavelengthSweep element
-    ref_L = np.array([float(l) for l in last_wavelength_sweep.find("L").text.split(",")])
-    ref_IL = np.array([float(il) for il in last_wavelength_sweep.find("IL").text.split(",")])
-
-    # Assign reference_wave and reference_trans to the last WavelengthSweep data
-    reference_wave = ref_L
-    reference_trans = ref_IL
-
-    # Find the maximum transmission value from the reference transmission data
-    ref_max = np.max(reference_trans)
-
-# ref fit
-
-    # Polynomial degree
-    degrees = range(1, 7)
-
-    # Store R-squared values
-    r_squared_values = {}
-
-    for degree in degrees:
-        # Fit polynomial with no rank warning
-        coeffs, _, _, _ = np.linalg.lstsq(np.vander(reference_wave, degree + 1), reference_trans, rcond=None)
-
-        # Create polynomial from coefficients
-        polynomial = np.poly1d(coeffs)
-
-        # Calculate R-squared
-        mean_transmission = np.mean(reference_trans)
-        total_variation = np.sum((reference_trans - mean_transmission) ** 2)
-        residuals = np.sum((transmission_list - polynomial(reference_wave)) ** 2)
-        r_squared = 1 - (residuals / total_variation)
-
-        # Store R-squared values
-        r_squared_values[degree] = r_squared
-
-    # flat fit
-
-    # Fit polynomial to the reference transmission data
-    poly6 = polynomial(reference_wave)
-    for i, wavelengthsweep in enumerate(root.findall('.//WavelengthSweep')):
-        flat_transmission = np.array(transmission_list) - np.array(poly6)
-
-        if i != len(root.findall('.//WavelengthSweep')) - 1:
-            # Find peaks in transmission data
-            peaks, _ = find_peaks(flat_transmission, distance=50)  # Adjust distance parameter as needed
-
-            # Iterate through peaks and find the one within the specified wavelength range
-            for peak_index in peaks:
-                if 1310 <= wavelength_list[peak_index] <= 1325:
-                    # Update maximum transmission point if the peak is higher
-                    if flat_transmission[peak_index] > max_transmission_point2:
-                        max_transmission_point2 = flat_transmission[peak_index]
-                        max_transmission_wavelength2 = wavelength_list[peak_index]
-
-        if i != len(root.findall('.//WavelengthSweep')) - 1: # 마지막 아닐 때
-            # Find peaks in transmission data
-            peaks, _ = find_peaks(flat_transmission, distance=50)  # Adjust distance parameter as needed
-
-            # Iterate through peaks and find the one within the specified wavelength range
-            for peak_index in peaks:
-                if 1325 <= wavelength_list[peak_index] <= 1340:
-                    # Update maximum transmission point if the peak is higher
-                    if flat_transmission[peak_index] > max_transmission_point:
-                        max_transmission_point = flat_transmission[peak_index]
-                        max_transmission_wavelength = wavelength_list[peak_index]
-
-        if i != len(root.findall('.//WavelengthSweep')) - 1: # 마지막 아닐 때
-            # Find peaks in transmission data
-            peaks, _ = find_peaks(flat_transmission, distance=50)  # Adjust distance parameter as needed
-
-            # Iterate through peaks and find the one within the specified wavelength range
-            for peak_index in peaks:
-                if 1550 <= wavelength_list[peak_index] <= 1565:
-                    # Update maximum transmission point if the peak is higher
-                    if flat_transmission[peak_index] > max_transmission_point:
-                        max_transmission_point = flat_transmission[peak_index]
-                        max_transmission_wavelength = wavelength_list[peak_index]
-
-        if i != len(root.findall('.//WavelengthSweep')) - 1:
-            # Find peaks in transmission data
-            peaks, _ = find_peaks(flat_transmission, distance=50)  # Adjust distance parameter as needed
-
-            # Iterate through peaks and find the one within the specified wavelength range
-            for peak_index in peaks:
-                if 1565 <= wavelength_list[peak_index] <= 1580:
-                    # Update maximum transmission point if the peak is higher
-                    if flat_transmission[peak_index] > max_transmission_point2:
-                        max_transmission_point2 = flat_transmission[peak_index]
-                        max_transmission_wavelength2 = wavelength_list[peak_index]
-
-    # Print the maximum transmission points and their corresponding wavelengths
-    m = (max_transmission_point2 - max_transmission_point) / (
-            max_transmission_wavelength2 - max_transmission_wavelength)
-    b = max_transmission_point - m * max_transmission_wavelength  # "Equation of the line: y = {m}x + {b}"
-
-    # peak_fit
-    peak_fit = m * np.array(wavelength_list) + b
-
-    # Return the required values
-    return { 'wavelength' : wavelength_list,
-             'transmission' : transmission_list,
-             'reference_wave' : reference_wave,
-             'reference_trans' : reference_trans,
-             'reference_max' : ref_max,
-             'ref_fit' : polynomial,
-             'flat_fit' : poly6,
-             'peak_fit' : peak_fit,
-             'r_squared' : r_squared_values}
-    # r_squared을 호출할 때 1차 : r_squared[0], 2차 : r_squared[1] . . .
-
+if __name__ == '__main__':
+    path = '../dat/HY202103/D07/20190715_190855/HY202103_D07_(0,0)_LION1_DCM_LMZC.xml'
+    __, __ref = parse_trans(path)
+    print(fit_ref(__ref))
