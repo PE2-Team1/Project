@@ -74,12 +74,12 @@ IPython
 
 For pip:
 ```shell
-$ pip install pandas numpy lmfit matplotlib scipy openpyxl ipywidgets IPython
+$ pip install -r requirements.txt
 ```
 
 For Anaconda: 
 ```shell
-$ conda install pandas numpy lmfit matplotlib scipy openpyxl ipywidgets IPython
+$ conda install -r requirements.txt
 ```
 
 **Step 2:** Put LMZ measurement XML data into `dat` folder
