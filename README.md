@@ -1,7 +1,15 @@
 # LMZ processor
 Processes data from Lumped Mach-Zehnder Modulators
 
-Made by Team 1
+Made by Team 1: Kim Beomseo, Son Eunji, Lee Hyeonseok
+
+## Introduction
+The program is a tool for analyzing and visualizing the characteristics of semiconductor wafer devices. This program allows users to easily measure and analyze various electrical properties of wafers.
+
+## Key Features
+- Measurement of electrical properties of wafer devices
+- Data visualization and graph generation
+- Data analysis and excel file generation
 
 ## How it works
 ### Directories
@@ -94,18 +102,21 @@ dat/
 
 **Step 5** Check process results in `res` folder
 
-## Made by:
+## Troubleshooting
+- Issue: The program does not start.
+  - Solution: Ensure all dependencies are installed and Python is correctly set up.
+- Issue: Data file not recognized. 
+  - Solution: Verify that the data file is in the correct format and located in the dat/ directory.
 
-#### -Kim Beomseo
-#### -Son Eunji
-#### -Lee Hyunseok
- 
+
+
 
 
 ## Contact Email
+If you have any questions or inquiries, please contact us via email.
 
-| name     | email                |
-|----------|----------------------|
-| Lee hyeonseok | hs7681@hanyang.ac.kr |
-| Kim Bumseo |      |
-|  Son Eunji         |   |
+| name          | email                |
+|---------------|----------------------|
+| Lee Hyeonseok | hs7681@hanyang.ac.kr |
+| Kim Beomseo    | kbs03@hanyang.ac.kr  |
+| Son Eunji     |  eunjeeok2@naver.com  |
