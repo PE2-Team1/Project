@@ -3,6 +3,14 @@ Processes data from Lumped Mach-Zehnder Modulators
 
 Made by Team 1
 
+## Introduction
+The Program is a tool for analyzing and visualizing the characteristics of semiconductor wafer devices. This program allows users to easily measure and analyze various electrical properties of wafers.
+
+## key Features
+- Measurement of electrical properties of wafer devices
+- Data visualization and graph generation
+- Data analysis and excel file generation
+
 ## How it works
 ### Directories
 - `dat`
@@ -96,18 +104,34 @@ dat/
 
 **Step 5** Check process results in `res` folder
 
+## Troubleshooting
+- Issue: The program won't start.
+  - Solution: Ensure all dependencies are installed and Python is correctly set up.
+- Issue: Data file not recognized. 
+  - Solution: Verify that the data file is in the correct format and located in the data/ directory.
+
+## FAQ
+- <span style="font-size: 1.2em;"> Q:</span> An error occurs when I run the program. How can I fix it?
+- <span style="font-size: 1.2em;"> A:</span> First, check that all dependencies are installed and that your Python version meets the requirements. If the problem persists, contact us via email.
+
+<br>
+
+- <span style="font-size: 1.2em;"> Q:</span> Can I export the data analysis results in different formats?
+- <span style="font-size: 1.2em;"> A:</span> Yes, data analysis results can be exported in various formats, such as CSV, and Excel.
+
 ## Made by:
 
 #### -Kim Beomseo
 #### -Son Eunji
-#### -Lee Hyunseok
+#### -Lee Hyeonseok
  
 
 
 ## Contact Email
+If you have any questions or inquiries, please contact us via email.
 
 | name     | email                |
 |----------|----------------------|
 | Lee hyeonseok | hs7681@hanyang.ac.kr |
-| Kim Bumseo |      |
-|  Son Eunji         |   |
+| Kim Bumseo | eunjeeok2@naver.com  |
+|  Son Eunji         | kbs03@hanyang.ac.kr  |
