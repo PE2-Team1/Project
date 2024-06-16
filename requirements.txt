@@ -1,6 +1,8 @@
-pandas>=2.1.4
-numpy>=1.26.4
-lmfit>=1.2.2
-matplotlib>=3.8.0
-scipy>=1.11.4
-openpyxl>=3.0.10
+pandas
+numpy
+lmfit
+matplotlib
+scipy
+openpyxl
+ipywidgets
+IPython
